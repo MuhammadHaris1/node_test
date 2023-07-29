@@ -79,6 +79,19 @@ export class MenuItemsService {
   */
 
   async getMenuItems() {
-    throw new Error('TODO in task 3');
+    const menuItems = await this.app.getDataSource().menuItem.findMany();
+    const menuItemsWithChildren = menuItems.map((menuItem) => {
+        return {
+            ...menuItem,
+            children: menuItems.filter((child) => child.parentId === menuItem.id).map((child) => {
+                return {
+                    ...child,
+                    children: menuItems.filter((grandChild) => grandChild.parentId === child.id)
+                }
+            })
+        }
+    });
+    return menuItemsWithChildren.filter((menuItem) => menuItem.parentId === null);
+    // throw new Error('TODO in task 3');
   }
 }
